@@ -1,6 +1,6 @@
 # NOTEZA AI 🧠
 
-[![Streamlit](https://img.shields.io/badge/Live-https://noteza-ai-ritul-pruthi.streamlit.app-brightgreen)](https://noteza-ai-ritul-pruthi.streamlit.app/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://noteza-ai-ritul-pruthi.streamlit.app/)
 
 AI-powered study notes generator using Google Gemini—brief/detailed levels, PDF/MD exports, history sidebar. Perfect for exams.
 
