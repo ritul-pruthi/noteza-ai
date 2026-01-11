@@ -16,19 +16,10 @@ genai.configure(api_key = API_KEY )
 
 st.set_page_config(
 	page_title = "NOTEZA AI",
-	page_icon = "📚"
+	page_icon = "📚",
+	layout = "wide",
+	initial_sidebar_state = "collapsed"
 )
-# Hide Streamlit menu, footer, and header
-hide_st_style = """
-<style>
-#MainMenu {display: none !important;}
-header {display: none !important;}
-footer {visibility: hidden !important;}
-footer:after {content:'' !important;}
-</style>
-"""
-st.markdown(hide_st_style, unsafe_allow_html=True)
-
 
 # Main Code
 st.title("NOTEZA AI")
