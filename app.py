@@ -6,16 +6,29 @@ from fpdf import FPDF
 
 load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
+
+# Stop app if GEMINI_API_KEY is missing
 if not API_KEY:
     st.error("GEMINI_API_KEY missing from .env file. Add it and restart.")
     st.stop()
+
 genai.configure(api_key = API_KEY )
 
 st.set_page_config(
 	page_title = "NOTEZA AI",
 	page_icon = "📚"
 )
+# Hide Streamlit menu, footer, and header
+hide_st_style = """
+<style>
+#MainMenu {visibility: hidden;}  
+footer {visibility: hidden;}     
+header {visibility: hidden;}    
+</style>
+"""
+st.markdown(hide_st_style, unsafe_allow_html=True)
 
+# Main Code
 st.title("NOTEZA AI")
 
 PROMPT_TEMPLATE = """
@@ -34,7 +47,7 @@ Give 1-2 examples per major concept.
 [DONT USE EMOJIS]
 
 """
-# Intializing Parameters For History
+# Initialize history in session_state
 
 if 'notes' not in st.session_state:
 	st.session_state.notes = []
@@ -42,16 +55,18 @@ if 'selected_note' not in st.session_state:
 	st.session_state.selected_note = None
 
 with st.sidebar:
+	# Display History
 	st.header("History")
 	for i, note in enumerate(st.session_state.notes[-8:][::-1]):
 		if st.button(f"📖 {note['topic']} ({note['level']})", key = f"note_{len(st.session_state.notes) - i}"):
 			st.session_state.selected_note = note['text']
 
-	# Adding Clear Button
+	# Clear Button
 	if st.button("🗑️ Clear All", key = "delete_history"):
 		st.session_state.notes = []
 		st.session_state.selected_note = None
-		st.rerun()
+		st.rerun() 		 # Refresh the app to reflect changes
+
 
 # Function to generate PDFs
 def generate_pdf(text):
@@ -67,7 +82,7 @@ def generate_pdf(text):
 if st.session_state.selected_note:
 	st.markdown(st.session_state.selected_note)
 	
-	match_note = None 		# Finding note that matches currently selected note
+	match_note = None 		# Find note that matches currently selected note
 	for note in st.session_state.notes:
 		if note['text'] == st.session_state.selected_note:
 			match_note = note
@@ -76,7 +91,7 @@ if st.session_state.selected_note:
 	if match_note:
 		topic_name = match_note['topic']
 		
-	# Downloading Options For History 
+	# Display download buttons for selected note
 	col1, col2 = st.columns(2)
 	with col1:
 			st.download_button(
@@ -96,11 +111,11 @@ if st.session_state.selected_note:
 	st.divider()
 	if st.button("✨ Generate New Notes", key="generate_new"):
 		st.session_state.selected_note = None
-		st.rerun()
+		st.rerun() 		 # Refresh the app to reflect changes
 
 
 else:
-	# Showing Inputs Only When Not Viewing History
+	# Show input form if no note is selected
 	topic = st.text_input("What's on your mind today?")
 	detail_level = st.selectbox("Detail level:", ["Brief", "Detailed"])
 	button = st.button("✨ Generate")
@@ -109,7 +124,9 @@ else:
 		st.warning("Please Enter a topic")
 	elif button and topic.strip():
 		with st.spinner("Generating your notes......"):
-			prompt = PROMPT_TEMPLATE.format(TOPIC =  topic, DETAIL_LEVEL = detail_level)
+
+			# Fill prompt template with user topic and detail level
+			prompt = PROMPT_TEMPLATE.format(TOPIC =  topic, DETAIL_LEVEL = detail_level)      
 			model = genai.GenerativeModel("gemini-2.5-flash")
 			response = model.generate_content(prompt)
 
@@ -119,7 +136,7 @@ else:
 				"text" : response.text
 			})
 			st.session_state.selected_note = response.text
-			st.rerun()
+			st.rerun()   # Refresh the app to reflect changes
 			st.markdown(response.text)
 			st.success("✨ Saved to history! Download below:")
 			col1, col2 = st.columns(2)
