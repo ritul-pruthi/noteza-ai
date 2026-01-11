@@ -16,9 +16,7 @@ genai.configure(api_key = API_KEY )
 
 st.set_page_config(
 	page_title = "NOTEZA AI",
-	page_icon = "📚",
-	layout = "wide",
-	initial_sidebar_state = "collapsed"
+	page_icon = "📚"
 )
 
 # Main Code
@@ -61,7 +59,7 @@ with st.sidebar:
 		st.rerun() 		 # Refresh the app to reflect changes
 
 
-# Function to generate PDFs
+# Function to generate PDF
 def generate_pdf(text):
     pdf = FPDF()
     pdf.add_page()
@@ -72,6 +70,28 @@ def generate_pdf(text):
     return bytes(pdf.output(dest='S'))
 
 
+# Display Download Buttons
+def show_download_buttons(text, topic_name):
+    """Display MD and PDF download buttons for notes"""
+    col1, col2 = st.columns(2)
+    with col1:
+        st.download_button(
+            label="📥 Download as MD",
+            data=text,
+            file_name=f"{topic_name} notes.md",
+            mime="text/markdown"
+        )
+    with col2:
+        pdf_bytes = generate_pdf(text)
+        st.download_button(
+            label="📄 Download as PDF",
+            data=pdf_bytes,
+            file_name=f"{topic_name} notes.pdf",
+            mime="application/pdf"
+        )
+
+
+
 if st.session_state.selected_note:
 	st.markdown(st.session_state.selected_note)
 	
@@ -80,27 +100,13 @@ if st.session_state.selected_note:
 		if note['text'] == st.session_state.selected_note:
 			match_note = note
 			break
-		
+			
 	if match_note:
 		topic_name = match_note['topic']
-		
-	# Display download buttons for selected note
-	col1, col2 = st.columns(2)
-	with col1:
-			st.download_button(
-				label = "📥 Download as MD",
-				data = st.session_state.selected_note,
-				file_name = f"{topic_name} notes.md",
-				mime = "text/markdown"
-			)
-	with col2:
-			pdf_bytes = generate_pdf(st.session_state.selected_note)
-			st.download_button(
-				label = "📄 Download as PDF",
-				data = pdf_bytes,
-				file_name = f"{topic_name} notes.pdf",
-				mime = "application/pdf"
-			)
+		show_download_buttons(st.session_state.selected_note, match_note['topic'])
+	else:
+		st.warning("Note metadata not found.")
+    	
 	st.divider()
 	if st.button("✨ Generate New Notes", key="generate_new"):
 		st.session_state.selected_note = None
@@ -130,25 +136,5 @@ else:
 			})
 			st.session_state.selected_note = response.text
 			st.rerun()   # Refresh the app to reflect changes
-			st.markdown(response.text)
-			st.success("✨ Saved to history! Download below:")
-			col1, col2 = st.columns(2)
 
-			with col1:
-				st.download_button(
-					label = "📥 Download as MD",
-					data = response.text,
-					file_name = f"{topic} notes.md",
-					mime = "text/markdown"
-				)
-
-			with col2:
-				pdf_bytes = generate_pdf(response.text)
-				st.download_button(
-					label = "📄 Download as PDF",
-					data = pdf_bytes,
-					file_name = f"{topic} notes.pdf",
-					mime = "application/pdf"
-				)
 			
-
