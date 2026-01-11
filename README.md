@@ -14,4 +14,4 @@ AI-powered study notes generator using Google Gemini—brief/detailed levels, PD
 [https://noteza-ai-ritul-pruthi.streamlit.app/](https://noteza-ai-ritul-pruthi.streamlit.app/)
 
 ## Tech Stack
-Streamlit • Google Gemini AI • markdown-pdf
+Streamlit • Google Gemini AI 
