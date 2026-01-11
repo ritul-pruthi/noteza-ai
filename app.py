@@ -69,7 +69,6 @@ def generate_pdf(text):
     pdf.multi_cell(0, 6, text)
     return bytes(pdf.output(dest='S'))
 
-
 # Display Download Buttons
 def show_download_buttons(text, topic_name):
     """Display MD and PDF download buttons for notes"""
@@ -89,8 +88,6 @@ def show_download_buttons(text, topic_name):
             file_name=f"{topic_name} notes.pdf",
             mime="application/pdf"
         )
-
-
 
 if st.session_state.selected_note:
 	st.markdown(st.session_state.selected_note)
@@ -136,5 +133,3 @@ else:
 			})
 			st.session_state.selected_note = response.text
 			st.rerun()   # Refresh the app to reflect changes
-
-			
