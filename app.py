@@ -21,12 +21,14 @@ st.set_page_config(
 # Hide Streamlit menu, footer, and header
 hide_st_style = """
 <style>
-#MainMenu {visibility: hidden;}  
-footer {visibility: hidden;}     
-header {visibility: hidden;}    
+#MainMenu {display: none !important;}
+header {display: none !important;}
+footer {visibility: hidden !important;}
+footer:after {content:'' !important;}
 </style>
 """
 st.markdown(hide_st_style, unsafe_allow_html=True)
+
 
 # Main Code
 st.title("NOTEZA AI")
